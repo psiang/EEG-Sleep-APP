@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#66BAB7</color>
+    <color name="colorPrimaryDark">#66BAB7</color>
+    <color name="colorAccent">#66BAB7</color>
+    <color name="colorTitle">#66BAB7</color>
+    <color name="colorButtonOff">#66BAB7</color>
+    <color name="colorButtonOn">#A5DEE4</color>
+    <color name="departLine">#91989F</color>
+    <color name="timeTitle">#096148</color>
+    <color name="stageTitle">#00896C</color>
+    <color name="stage1">#A8D8B9</color>
+    <color name="stage2">#5DAC81</color>
+    <color name="stage3">#86C166</color>
+    <color name="stage4">#268785</color>
+    <color name="REM">#00AA90</color>
+    <color name="entryLabel">#000000</color>
+    <color name="centerText">#66BAB7</color>
+    <color name="EEGbackground">#114552</color>
+    <color name="EEGbackword">#FFFFFF</color>
+    <color name="good">#61C9B5</color>
+    <color name="well">#1F7D6B</color>
+    <color name="bad">#9ED874</color>
+    <color name="white">#FFFFFF</color>
+    <color name="advice_title">#1F7D6B</color>
+
+</resources>

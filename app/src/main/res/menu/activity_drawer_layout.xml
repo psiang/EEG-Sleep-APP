@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/grp1"  android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_data_collection"
+                android:icon="@drawable/airline_seat_flat"
+                android:title="@string/data_collection"/>
+            <item
+                android:id="@+id/nav_analysis_advices"
+                android:icon="@drawable/local_hospital"
+                android:title="@string/analysis_advices"/>
+            <item
+                android:id="@+id/nav_sleep_mall"
+                android:icon="@drawable/local_grocery_store"
+                android:title="@string/sleep_mall"/>
+    </group>
+
+    <group android:id="@+id/grp2" android:checkableBehavior="single" >
+            <item
+                android:id="@+id/nav_set"
+                android:icon="@drawable/settings"
+                android:title="@string/set"/>
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/help_outline"
+                android:title="@string/help"/>
+    </group>
+
+</menu>
