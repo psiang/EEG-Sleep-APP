@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--花体字-->
+    <font
+        android:fontStyle="normal"
+        android:font="@font/polya"
+        android:fontWeight="400"/>
+    <font
+        android:fontStyle="normal"
+        android:font="@font/tahu_"
+        android:fontWeight="400"/>
+</font-family>

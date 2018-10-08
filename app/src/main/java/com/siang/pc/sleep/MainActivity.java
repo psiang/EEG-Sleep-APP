@@ -73,6 +73,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private ArrayList<Fragment> fragments;
     private ArrayList<Fragment> fragments2;
 
+    //通过include其他界面layout实现界面切换
     private View include1;
     private View include2;
     private View include3;
@@ -93,11 +94,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         myviewpager2.addOnPageChangeListener(this);
     }
 
-    public void findView() {
+    public void findView() {//唤起menu边栏的view
         include1 = (View) findViewById(R.id.include_data);
         include2 = (View) findViewById(R.id.include_analysis);
         include3 = (View) findViewById(R.id.include_connect);
-        imgButton = (ImageButton) findViewById(R.id.top_account);
+        imgButton = (ImageButton) findViewById(R.id.top_account);//边栏唤起的icon
         //imgButton2 = (ImageButton) findViewById(R.id.imgButtonBack);
         drawerLayout = (DrawerLayout) findViewById(R.id.draw);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -152,14 +153,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
     public void buildFragmentAdapter() {
+        //data collection界面
         fragments = new ArrayList<Fragment>();
         fragments.add(new DayFragment());
         fragments.add(new WeekFragment());
         fragments.add(new MonthFragment());
         MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(),fragments);
         myviewpager1.setAdapter(adapter);
-        myviewpager1.setOffscreenPageLimit(2);
-
+        myviewpager1.setOffscreenPageLimit(2);//缓存页面数目
+        //analysis and advice界面
         fragments2 = new ArrayList<Fragment>();
         fragments2.add(new YourSleepFragment());
         fragments2.add(new SleepTipsFragment());
@@ -175,7 +177,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         btn_day = (Button)this.findViewById(R.id.btn_day);
         btn_week = (Button)this.findViewById(R.id.btn_week);
         btn_month = (Button)this.findViewById(R.id.btn_month);
-
+        //button字体样式设置
         btn_day.setTypeface(null, Typeface.NORMAL);
         btn_week.setTypeface(null, Typeface.NORMAL);
         btn_month.setTypeface(null, Typeface.NORMAL);
@@ -227,7 +229,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 myviewpager2.setCurrentItem(1);
                 break;
             case R.id.top_account:
-                drawerLayout.openDrawer(Gravity.LEFT);
+                drawerLayout.openDrawer(GravityCompat.START);
                 break;
             /*case R.id.imgButtonBack:
                 drawerLayout.closeDrawer(Gravity.LEFT);

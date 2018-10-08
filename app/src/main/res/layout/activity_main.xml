@@ -45,7 +45,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/include_analysis"></android.support.v4.view.ViewPager>
+                app:layout_constraintTop_toBottomOf="@+id/include_analysis">
+            </android.support.v4.view.ViewPager>
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/myviewpager_data"
@@ -56,7 +57,8 @@
                 app:layout_constraintBottom_toTopOf="@+id/include_connect"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/include_data"></android.support.v4.view.ViewPager>
+                app:layout_constraintTop_toBottomOf="@+id/include_data">
+            </android.support.v4.view.ViewPager>
 
             <ImageButton
                 android:id="@+id/top_account"
