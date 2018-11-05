@@ -1,10 +1,21 @@
 package com.siang.pc.sleep;
 
+import android.Manifest;
 import android.app.Activity;
-import android.content.DialogInterface;
+import android.app.ActivityOptions;
+import android.app.ListActivity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,31 +23,24 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.data.*;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Set;
 
 import com.siang.pc.adapter.MyFragmentPagerAdapter;
 import com.siang.pc.fragment.DayFragment;
@@ -44,10 +48,12 @@ import com.siang.pc.fragment.MonthFragment;
 import com.siang.pc.fragment.SleepTipsFragment;
 import com.siang.pc.fragment.WeekFragment;
 import com.siang.pc.fragment.YourSleepFragment;
-import com.siang.pc.view.EcgView;
+
+import static com.siang.pc.sleep.AnalysisActivity.setDrawerLeftEdgeSize;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener,ViewPager.OnPageChangeListener {
     private PieChart picChart;
+    private MainActivity activity = this;
 
     private List<Integer> datas = new ArrayList<Integer>();
 
@@ -80,7 +86,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private ImageButton imgButton;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    //private ImageButton imgButton2;
+
+    private FloatingActionButton bleConnectButton;
+
+    //扫描之后的设备地址存储
+    Set<String> macs = new HashSet<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +103,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         buildFragmentAdapter();
         myviewpager1.addOnPageChangeListener(this);
         myviewpager2.addOnPageChangeListener(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android M Permission check
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+            }
+        }
     }
 
     public void findView() {//唤起menu边栏的view
@@ -103,6 +121,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         drawerLayout = (DrawerLayout) findViewById(R.id.draw);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         setDrawerLeftEdgeSize(this, drawerLayout, 0.2f);
+
+        bleConnectButton = include3.findViewById(R.id.floatingActionButton);
+
     }
 
     public void setButton() {
@@ -133,7 +154,57 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 return true;
             }
         });
+
+        bleConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final BluetoothAdapter mBluetoothAdapter;
+                final BluetoothManager bluetoothManager =
+                        (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+                mBluetoothAdapter = bluetoothManager.getAdapter();
+
+                if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, 0);
+                }
+                long SCAN_PERIOD = 5000;
+
+                Handler mHandler = new Handler();
+
+                //五秒之后执行函数部分
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                        Log.d("--------------", "stop scan--------------------------");
+                        //将mac地址转换成String[]数组
+                        String[] macList=macs.toArray(new String[macs.size()]);;
+                        Intent  intentList=new Intent(MainActivity.this,DeviceConnectActivity.class);
+                        intentList.putExtra("macList",macList);
+                        startActivity(intentList, ActivityOptions.makeSceneTransitionAnimation(activity).toBundle());
+                    }
+                }, SCAN_PERIOD);
+
+                //开始扫描
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
+                Log.d("---------------", "start scan--------------------------");
+
+            }
+
+        });
     }
+
+    // 实现回调接口，接口决定着扫描结果是如何返回的
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =
+            new BluetoothAdapter.LeScanCallback() {
+                @Override
+                public void onLeScan(final BluetoothDevice device, int rssi,
+                                     byte[] scanRecord) {
+                    macs.add(device.getName()==null?device.getAddress():device.getName());
+                }
+            };
+
+
 
     public static void setDrawerLeftEdgeSize(Activity activity, DrawerLayout drawerLayout, float displayWidthPercentage) {
         if (activity == null || drawerLayout == null) return;
@@ -268,5 +339,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 100:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // TODO request success
+                }
+                break;
+        }
+    }
 
 }
